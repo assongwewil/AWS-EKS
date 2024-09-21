@@ -1,0 +1,69 @@
+batch:
+  fast-fail: false
+  build-graph:
+ #service1 build, scan, and deploy  
+    - identifier: service1Scan
+      buildspec: DevsecOps/buildspec/buildspec_secscan_Service1.yml
+      env:
+        variables:
+          BUILD_ID: service1Scan
+      ignore-failure: false
+    - identifier: service1Build
+      buildspec: DevsecOps/buildspec/build_service2.yml
+      env:
+        variables:
+          BUILD_ID: service1Build
+      depend-on:
+        - service1Scan
+    - identifier: service1Deploy
+      buildspec: DevsecOps/buildspec/buildspec_deploy_service1.yml
+      env:
+        variables:
+          BUILD_ID: service1Deploy
+      depend-on:
+        - service1Build
+
+#Service2 scan, build and deploy 
+    - identifier: service2Scan
+      buildspec: DevsecOps/buildspec/buildspec_secscan_Service2.yml
+      env:
+        variables:
+          BUILD_ID: service2Scan
+      ignore-failure: false
+    - identifier: service2Build
+      buildspec: DevsecOps/buildspec/build_service2.yml
+      env:
+        variables:
+          BUILD_ID: service2Build
+      depend-on:
+        - service2Scan
+    - identifier: service2Deploy
+      buildspec: DevsecOps/buildspec/deploy_service2.yml
+      env:
+        variables:
+          BUILD_ID: service2Deploy
+      depend-on:
+        - service2Build
+
+
+#Service3 scan, build and deploy 
+    - identifier: service3Scan
+      buildspec: DevsecOps/buildspec/buildspec_secscan_Service3.yml
+      env:
+        variables:
+          BUILD_ID: service3Scan
+      ignore-failure: false
+    - identifier: service3Build
+      buildspec: DevsecOps/buildspec/build_service3.yml
+      env:
+        variables:
+          BUILD_ID: service3Build
+      depend-on:
+        - service2Scan
+    - identifier: service3Deploy
+      buildspec: DevsecOps/buildspec/deploy_service2.yml
+      env:
+        variables:
+          BUILD_ID: service3Deploy
+      depend-on:
+        - service2Build
