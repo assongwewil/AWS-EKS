@@ -2,15 +2,17 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+#access values.replicaCount
 replicaCount: 1
 
+#values.image.repository
 image:
   repository: xxxxxxxx.dkr.ecr.us-east-2.amazonaws.com/aws-proserve-java-docker
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
 
-imagePullSecrets: []
+imagePullSecrets: []     #no value 
 nameOverride: ""
 fullnameOverride: ""
 
@@ -23,12 +25,12 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
-podAnnotations: {}
+podAnnotations: {}   #no value 
 
 podSecurityContext: {}
   # fsGroup: 2000
 
-securityContext: {}
+securityContext: {}   #no value 
   # capabilities:
   #   drop:
   #   - ALL

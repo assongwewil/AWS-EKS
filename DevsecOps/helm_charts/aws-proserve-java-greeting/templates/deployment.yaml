@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: {{ include "aws-proserve-java-greeting.fullname" . }}
   labels:
-    {{- include "aws-proserve-java-greeting.labels" . | nindent 4 }}
+    {{- include "aws-proserve-java-greeting.labels" . | nindent 4 }}   #the block of code is the entire dir aws-proserve-java-greeting
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
