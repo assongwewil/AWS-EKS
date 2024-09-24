@@ -5,7 +5,7 @@ metadata:
   namespace: kube-system
   labels:
     addonmanager.kubernetes.io/mode: Reconcile    # Anything installed via the addon manager with addonmanager.kubernetes.io/mode: Reconcile can't be modified
-data:
+data:  # required / takes key/value paids 
   system.conf: |-
     <system>
       root_dir /tmp/fluentd-buffers/

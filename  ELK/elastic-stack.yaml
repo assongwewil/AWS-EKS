@@ -308,7 +308,7 @@ spec:
       - name: kibana-logging
         image: docker.elastic.co/kibana/kibana-oss:6.2.4
         resources:
-          # need more cpu upon initialization, therefore burstable class
+          # need more cpu upon initialization, therefore burstable class   #### cpu limit and request added / no memory limit 
           limits:
             cpu: 1000m
           requests:
@@ -316,14 +316,35 @@ spec:
         env:
           - name: ELASTICSEARCH_URL
             value: http://elasticsearch-logging:9200
-        ports:
+                    ports:
         - containerPort: 5601
           name: ui
           protocol: TCP
 
+###### we can use configMap here/ adding endFrom  block for me text env variables,  
+
+        envFrom:
+        - configMapRef: 
+            name: nameof configMapfile   ***** eks will go into the configMap file and turn all the key/value pairs into env variables 
+
+# If the application deos not want to work with env variables. we can inject the content of the configmap in the form of a file mounted into a dir
+
+        volumeMounts:
+        - name: databade-fonfig-volume #***** we give a name / this is not mounting the data/ we are passing data env configuration as a file into the container filesystem 
+            mountPath: /etc/any/name/config #**** this dir does not exist. it will created in the filesystem in the image 
+    Volumes: 
+    - name: database-config-volume #********volumeMount is the configuration. Volumes is the object / we provide a name for the object 
+      configMaP: # if this was EBNS volume, the EBS will go here or a local dir on our host machine path will go here / In this case we are pointing it directly to the config map 
+        name:      #$we specify the name of the configMAp not the configMap file Name/ the name of the component ie kind: configMap name: this name / remember to create a kind: configMap containing the env variables 
+
+
+
+
+
 ---
 apiVersion: v1
 kind: Service
+
 metadata:
   name: kibana-logging
   namespace: kube-system
