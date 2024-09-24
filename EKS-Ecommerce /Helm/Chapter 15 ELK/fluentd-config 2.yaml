@@ -4,7 +4,7 @@ metadata:
   name: fluentd-es-config-v0.1.4
   namespace: kube-system
   labels:
-    addonmanager.kubernetes.io/mode: Reconcile    # Anything installed via the addon manager with addonmanager.kubernetes.io/mode: Reconcile can't be modified
+    addonmanager.kubernetes.io/mode: Reconcile
 data:
   system.conf: |-
     <system>
