@@ -6,12 +6,12 @@ metadata:
   labels:
     addonmanager.kubernetes.io/mode: Reconcile
 data:
-  system.conf: |-
+  system.conf: |-   # there are so many ways to use multiline for the values / this is the first file to be created 
     <system>
       root_dir /tmp/fluentd-buffers/
     </system>
 
-  containers.input.conf: |-
+  containers.input.conf: |-     #the second file to be creted 
     # This configuration file for Fluentd / td-agent is used
     # to watch changes to Docker log files. The kubelet creates symlinks that
     # capture the pod name, namespace, container name & Docker container ID
