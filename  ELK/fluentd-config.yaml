@@ -11,7 +11,32 @@ data:  # required / takes key/value paids
       root_dir /tmp/fluentd-buffers/
     </system>
 
-  containers.input.conf: |-
+  ###
+  data:
+    containers.input.conf:    ***** this key will be the fileNAme created 
+            key1:value1  #    this and
+            key2:value2  # this will be the value and we want them to be spread in a single line/ ie one value/ # we are using | to enable us to add multiple line values / this will create a string to be injected into the file 
+            # since this is now a properties file we will need to use = instead of : eg as in this case  # time="2016-02-04T06:51:03.053580605Z" level=info msg="GET /containers/json"
+            In this case we are using configMap as a properties file 
+
+If we want to use configMap as env variables the we will use have data and the rest will key:value 
+
+We can create multiples files like this 
+
+    containers.input.conf:    ***** this key will be the fileNAme created 
+            key1:value1  #    this and
+            key2:value2  # this will be the value and we want them to be spread in a single line/ ie one value/ # we are using | to enable us to add multiple line values / this will create a string to be injected into the file 
+            # since this is now a properties file we will need to use = instead of : eg as in this case  # time="2016-02-04T06:51:03.053580605Z" level=info msg="GET /containers/json"
+            In this case we are using configMap as a properties file 
+
+
+The files will be created and our application car read the file as regular file 
+
+We have the Option to convert the data in configMap into env variables or mount the configMap as a volume to create file or files in the container filesystem so that the app can read it 
+  
+
+  In this example this case this configMap will be mounted as volume to create all these files eg containers.input.conf, system.input.conf ie all the keys 
+    containers.input.conf: |-  #### instead of using key/value pairs we can make the key the name of the file that will be created in the container filesystem containers.input.conf will be the filename created 
     # This configuration file for Fluentd / td-agent is used
     # to watch changes to Docker log files. The kubelet creates symlinks that
     # capture the pod name, namespace, container name & Docker container ID
@@ -384,7 +409,7 @@ data:  # required / takes key/value paids
       tag kernel
     </source>
 
-  forward.input.conf: |-
+  forward.input.conf: |-  # we are using | to enable us to add multiple line values 
     # Takes the messages sent over TCP
     <source>
       @type forward
