@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aws-config
+data:
+  credential-process: |
+    #!/usr/bin/env bash
+    aws sts assume-role-with-web-identity \
+      --duration-seconds 43200 \ 
+      --web-identity-token file:///var/run/secrets/eks.amazonaws.com/serviceaccount/token \
+      --role-arn arn:aws:iam::123456789012:role/role-name \
+      --region us-west-2 --output json | jq -r '.Credentials += {"Version": 1}'
+  config: |
+    # invokes the above script
+    [default]
+    credential_process = /path/to/aws_config_dir/credential-process
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: my-serviceaccount
+  annotations: {}
+  # Do NOT set the role ARN annotation on the service account, since you're now using the AWS SDK
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+spec:
+  serviceAccountName: my-serviceaccount
+  containers:
+  - name: container-name
+    image: container-image:version
+    env:
+    - name: AWS_CONFIG_FILE
+      value: "/path/to/aws_config_dir/config"
+    volumeMounts:
+    - mountPath: "/var/run/secrets/eks.amazonaws.com/serviceaccount/"
+      name: aws-token
+    - mountPath: "/path/to/aws_config_dir"
+      name: aws-config-configmap
+  volumes:
+  # This volume must be configured in the pod spec, since you're not relying on the webhook
+  # to add it
+  - name: aws-token
+    projected:
+      sources:
+      - serviceAccountToken:
+          audience: "sts.amazonaws.com"
+          expirationSeconds: 86400
+          path: token
+  # This volume references the above AWS config file configMap
+  - name: aws-config-configmap
+    configMap:
+      name: aws-config
+      # makes the credential-process executable
+      defaultMode: 0777

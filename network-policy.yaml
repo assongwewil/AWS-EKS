@@ -6,11 +6,11 @@ spec:
   podSelector:
     matchLabels:
       app: client-one
-  egress:
+  egress:                # we create out outbound rule say we can allow traffic 
   - to:
     - podSelector:
         matchLabels:
-          app: demo-app
+          app: demo-app          # this policy will apply to all app labeled demo-app 
   - to:
     - namespaceSelector:
         matchLabels:
@@ -82,27 +82,34 @@ metadata:
   name: test-network-policy
   namespace: default
 spec:
+  order: 900   #3 I just added this/ we can add order to create precedence of the rule just like in NACL ie which rule will apply first 
   podSelector:
     matchLabels:
       role: db
   policyTypes:
     - Ingress
     - Egress
-  ingress:
-    - from:
+  ingress:          #we create an ingress rule saying we can allow traffic 
+    - action: Deny ***** added by me/ we can add a deny action 
+    - from:                # from this Ip block 
         - ipBlock:
             cidr: 172.17.0.0/16
             except:
-              - 172.17.1.0/24
+              - 172.17.1.0/24    # except this IP 
         - namespaceSelector:
             matchLabels:
-              project: myproject
-        - podSelector:
+              project: myproject      # fyi this policy will be apply to a receiveer pod / this means role helper pods can not talke to any  pod or BE pod that has this policy 
+        - podSelector:                # we can apply this policy to a db pod / Calico will implement this policy / this is an eks policy not calico/ calico is just the implementator 
             matchLabels:
-              role: frontend
+              role: frontend    # accept traffic from or source any pod with role = frontend /  this policy will be apply to a backend or another pod  or 
       ports:
         - protocol: TCP
           port: 6379
+      http:    # added by me/ we can add layer 7 or http layer rules 
+        methods:
+          - post 
+         paths: 
+          -exact: /table/*/customers  # table, objectId / customers     # in this case post will be allowed but not a get 
   egress:
     - to:
         - ipBlock:
@@ -139,3 +146,91 @@ kubectl exec deployment/ui -n ui -- curl -s http://catalog.catalog/health --conn
 WE EXEC INSIDE ONE POD AND MAKE A CURL COMMAND TO ACCESS ANOTHER POD 
 
    
+
+   project Calico
+
+   Network policy 
+   connections btw pods 
+   Label-based 
+   declarative 
+
+
+united layer 3 and 7
+   Layer 3 and layer 7 rules 
+
+   We split the role ie 
+
+   role: frontend 
+
+   role: helper 
+
+   role: db 
+
+
+   What if we just change a pod label from helper to FE to get access 
+
+   We can apply this rules to service accounts to prevent the above case 
+
+   Service Account provide an identity or lavel 5 for your pod to use 
+   Every Kubernetes namespace has a default ServiceAccount,
+
+   recommemded to create new minimally-privileged ServiceAccounts for each workload in each namespace
+
+
+   default SA grant identity to all the pods in the namespace 
+
+   service account 
+   We add a service account to all pod deployment 
+
+   cat >my-deployment.yaml <<EOF
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+spec:
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      serviceAccountName: my-service-account
+      containers:
+      - name: my-app
+        image: public.ecr.aws/nginx/nginx:X.XX
+EOF
+
+
+Service acccount has the role directly or a reference to ConfigMap to get the role 
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::123456789012:role/xxxx
+
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: eks-admin
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: eks-admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: eks-admin
+  namespace: kube-syste
+
+
+  the link 
+
+  https://youtu.be/fPvNerbvyic?t=1105
