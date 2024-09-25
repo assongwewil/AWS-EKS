@@ -1,20 +1,50 @@
+#ALB needs to be added as an addo 
+#A load balancer is only able to direct toward one service, while K8s Ingress can direct toward multiple services in a cluster
+# direct traffic twds multiple services 
+
+#loabdalancer is not part of EKS 
+# traffic LB *********> Ingress ***********> Multiple Servics
+
+for n-tier ALB to the EC2 Instances 
+for EKS ..... ALB to Ingress and Ingress to Multiple Services  and and each service to multiple Pods 
+
+#   host file 
+Each computer has a host file 
+When we type a domain name on the browser, the OS checks the host file first to get the IP address/ if the IP is not found then it goes to your provider DNS server 
+# if two containers are running in the same host, the can resolve or find each other via local host 
+This means that their host file have the same local IP address 
+if we exec inside container A and do a DNS lookup for containB DNS name, containerA runtime will go inside container A host file and see the same IP belonging 
+to containerB DNS name 
+
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   namespace: robot-shop
   name: robot-shop
   annotations:
+
     kubernetes.io/ingress.class: alb
-    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/scheme: internet-facing    ****** this will add LB as an add - on 
     alb.ingress.kubernetes.io/target-type: ip
 spec:
   rules:
-    - http:
+    - host: # this does not have any host define/ this means it is definetly for all. i just added this host / we can use host to specify the host instead all host
+    - http:       ******this is a list/ this is the first rule / Rule for each request/ domain.com is request 
         paths:
-          - path: /
+          - path: /      ####  everything after wil.com/ ie wil.com/A  and wil.com/b
             pathType: Prefix
             backend:
               service:
-                name: web
+                name: web    #### this means all traffic or all request will come to this web service to be router to the port 
                 port:
                   number: 8080
+    - host: # host1  if we have multiple service running in our cluster, we can define rules for another service here 
+
+    for headers we can use nginx Ingress controller doc how to setup headers here 
+
+
+    - host:  domainName eg wil.com  # host2
+
+
+  If we don't want EVERY ONE OR TO RESTRICT OUR FRONT END ACCESS, WE CAN ADD FE ACCESS AUTHENTICATION 
+  FOR instance if we have an Admin console access 
