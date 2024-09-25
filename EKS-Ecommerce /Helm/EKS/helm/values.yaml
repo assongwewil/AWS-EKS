@@ -141,3 +141,48 @@ if there's no value default function w2ill use wilrepo as the default value
 
 
 {{ .Values.repoName | default "wilrepo" | upper  }} # and then pipe the result to the upper function 
+
+FLOW CONTROL 
+
+IF THEN AND ELSE STATEMENT 
+
+IF IN THE VALUE.ENV == DEV }}-DEV  {{ END}} 
+
+THEN **** DOES NOT APPEAR IN THE CODE 
+{{ END}} **** MEANS END OF THE IF STATEMENT 
+
+{{IF VALUE.sENV == DEV }}-DEV  **** MEANS IF IN THE value in the values.env == Dev then 
+append -Dev to this URL or string and end of the if statement 
+
+Alternate way to do this is 
+
+{{IF  VALUEs.ENV == DEV }}-DEV 
+{{IF EQ VALUEs.ENV DEV }}-DEV 
+remove the condition and use a function that is 
+
+if function 1st. 2P 
+WE REMOVE THE =  OPERATOR AND THEN USE THE FUNCTION EQ WHICH DOES THE SAME THING 
+
+{{IF eq VALUE.sENV  DEV }}-DEV {{ end }}
+
+use case 
+
+wilrepoName{{IF eq VALUE.sENV  DEV }}-DEV {{ end }}
+
+if the condition is true the result will be wilrepoName-Dev 
+
+if the condition is false then the result will be wilrepoName without the -dev 
+
+BOOLEABN 
+
+we can alos switch it to bolean 
+wilrepoName{{IF eq VALUE.sENV  true }}-DEV {{ end }}    ***** we replace dev with boolean true 
+
+in our values.yaml we will also have a boolean value for the key
+
+Else 
+
+THE INFO THAT COMES AFTER THE ELSE MEANS THE FIRST EXPRESSION HAS  been evaluated to false 
+
+NAMED TEMPLATE 
+
