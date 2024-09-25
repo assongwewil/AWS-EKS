@@ -1,0 +1,141 @@
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: client-one-allow-egress-ip
+spec:
+  podSelector:
+    matchLabels:
+      app: client-one
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: demo-app
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+      podSelector:
+        matchLabels:
+          k8s-app: kube-dns
+    ports:
+    - port: 53
+      protocol: UDP
+  - to:
+    - ipBlock:
+        cidr: 192.168.161.234/32
+    ports:
+    - port: 80
+      protocol: TCP
+
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns-access
+  namespace: default
+spec:
+  podSelector:
+    matchLabels: {}
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+      podSelector:
+        matchLabels:
+          k8s-app: kube-dns
+    ports:
+    - protocol: UDP
+      port: 53
+
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-app-one
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      k8s-app: app-one
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          k8s-app: client-one
+    ports:
+    - protocol: TCP
+      port: 80
+
+  the link 
+  https://archive.eksworkshop.com/beginner/120_network-policies/calico/stars_policy_demo/apply_network_policies/
+
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: test-network-policy
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      role: db
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - ipBlock:
+            cidr: 172.17.0.0/16
+            except:
+              - 172.17.1.0/24
+        - namespaceSelector:
+            matchLabels:
+              project: myproject
+        - podSelector:
+            matchLabels:
+              role: frontend
+      ports:
+        - protocol: TCP
+          port: 6379
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 10.0.0.0/24
+      ports:
+        - protocol: TCP
+          port: 5978
+
+
+The network policy specification contains the following key segments:
+
+    metadata: similar to other Kubernetes objects, it allows you to specify the name and namespace for the given network policy.
+    spec.podSelector: allows for the selection of specific pods based on their labels within the namespace to which the given network policy will be applied. If an empty pod selector or matchLabels is specified in the specification, then the policy will be applied to all the pods within the namespace.
+    spec.policyTypes: specifies whether the policy will be applied to ingress traffic, egress traffic, or both for the selected pods. If you do not specify this field, then the default behavior is to apply the network policy to ingress traffic only, unless the network policy has an egress section, in which case the network policy will be applied to both ingress and egress traffic.
+    ingress: allows for ingress rules to be configured that specify from which pods (podSelector), namespace (namespaceSelector), or CIDR range (ipBlock) traffic is allowed to the selected pods and which port or port range can be used. If a port or port range is not specified, any port can be used for communication.
+
+
+By default, Kubernetes allows all pods to freely communicate with each other with no restrictions. Kubernetes Network Policies enable 
+you to define and enforce rules on the flow of traffic between pods, namespaces, and IP blocks (CIDR ranges). They act as a virtual firewall,
+ allowing you to segment and secure your cluster by specifying ingress (incoming) and egress (outgoing) network traffic rules based on various criteria 
+ such as pod labels, namespaces, IP addresses, and ports.
+
+
+ E-commerce ELS NETWORK POLICY 
+
+ WHAT THIS VIDEO AND THEN THIS LINK TO UNDERSTAND NETWORK POLICY 
+ https://www.youtube.com/watch?v=fPvNerbvyic&t=837s
+
+ https://www.eksworkshop.com/docs/networking/vpc-cni/network-policies/egress
+
+
+kubectl exec deployment/ui -n ui -- curl -s http://catalog.catalog/health --connect-timeout 5
+
+WE EXEC INSIDE ONE POD AND MAKE A CURL COMMAND TO ACCESS ANOTHER POD 
+
+   
