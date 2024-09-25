@@ -73,3 +73,7 @@ kubectrl create secrete generic mycredentials --form-file auth ***** we path the
 https://www.udemy.com/course/kubernetes-microservices/learn/lecture/14727792#overview
 
 Add some configuration to the ingress file 
+
+RUNNING ON THE CLOUD WE WILL NEED TO INSTALL THE INGRESS CONTROLLER 
+
+FOLLOW NGINX INGRESS CONTROLLER DEPLOYMENT STARTING FROM THE PREREQUISTE 
