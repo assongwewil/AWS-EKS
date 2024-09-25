@@ -1,5 +1,27 @@
+Predictable name 
+client to address them by name 
+Startup in sequence 
+
+
+you want to replicate a DB POD 
+you don't need a stateful Set for DB if its only one POD
+
+If you want to scale out the DB and have consistent DB then you need a statefulSet 
+
+ReplicaSet can scale a DB but the data will not be consistent
+
+If we create 3 mongo DB, the 3 DB will have an election to elect the primary. The primary can handle read traffic 
+
+The client will write to the primary and the data will be copied from the primary to the others  
+
+We will have to feed the client with a CSV list of the backend DBs 
+
+The url for the first and the other  pods will PodName.ServiceName 
+
+A
+
 apiVersion: v1
-kind: Service
+kind: Service    # this is a headless service / there's not syntax for headless service. this is because the client can't reach the pod directly 
 metadata:
   name: nginx
   labels:
@@ -35,15 +57,24 @@ spec:
         ports:
         - containerPort: 80
           name: web
-        volumeMounts:
+        volumeMounts:   # this is the volume configuration which will be reference in the volumeClaimTemplates:
         - name: www
           mountPath: /usr/share/nginx/html
-  volumeClaimTemplates:
+  volumeClaimTemplates:                           ## this the object for the volume claim configuration which will be part of the configuration of the statefulset
   - metadata:
-      name: www
+      name:        #mongo-persistent-storage                                 ## normally we will create a storage file with and the name on that file should be reference here 
     spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:
         requests:
           storage: 1Gi
       storageClassName: thin-disk
+
+
+      #mongo-persistent-storage  will be the value of the name in the storage filke
+
+
+      replicas: 14 in this case 14 volumeClaimTemplates:    will be created 
+
+      
+      
