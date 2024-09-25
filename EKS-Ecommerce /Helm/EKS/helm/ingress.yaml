@@ -23,9 +23,19 @@ metadata:
   name: robot-shop
   annotations:
 
+# remembner if we put this annotation configuration rules on top of this file it will apply to all the host 
+We can have a seperate ingress file for secured domain and another for unsecured domain. and apply the annotations only to the secured doamins
+we can have pulicIngressfile and private ingress file and the kind:Ingress name: value will be different for each 
     kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/scheme: internet-facing    ****** this will add LB as an add - on 
     alb.ingress.kubernetes.io/target-type: ip
+
+### for secrete we will also need to add this configuration 
+we can have multiple yaml files for the ingress 
+
+    
+    nginx.ingress.kubernetes.io/auth-type: basic internet-facing    ****** this infor is take fron mgnix ingress doc to add secret 
+    ngix.ingress.kubernetes.io/target-type: ip
 spec:
   rules:
     - host: # this does not have any host define/ this means it is definetly for all. i just added this host / we can use host to specify the host instead all host
@@ -48,3 +58,18 @@ spec:
 
   If we don't want EVERY ONE OR TO RESTRICT OUR FRONT END ACCESS, WE CAN ADD FE ACCESS AUTHENTICATION 
   FOR instance if we have an Admin console access 
+
+  Look for NGINX INGRESS CONTROLLER AUTH 
+
+  WE CAN USE HTPASSWD GENERATOR TOOL 
+  WE NEED THE PASSWORD TO BE HASHED 
+
+SAVE THE HASHED PASSORD IN A FILE CALLED AUTH 
+
+WE CAN USE A COMMAND TO CREATE THE SECRETE ON THE CLUSTER, RETRIEVE THE YAML AND THEN USE IT 
+
+kubectrl create secrete generic mycredentials --form-file auth ***** we path the auth file we just created 
+
+https://www.udemy.com/course/kubernetes-microservices/learn/lecture/14727792#overview
+
+Add some configuration to the ingress file 
