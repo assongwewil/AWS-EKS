@@ -9,3 +9,7 @@ spec:
     targetPort: 8080
   selector:
     service: cart
+
+
+# HELM TEMPLATE COMMAND 
+helm template .  ****** this will show us the yaml with their real values .... this helps in future debugging 

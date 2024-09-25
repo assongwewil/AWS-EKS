@@ -1,0 +1,20 @@
+Store predefined manifest yamls 
+
+bitnami = the best 
+
+helm repo add RepoName/OrganizationName 
+
+Then helm install MyAppRelease RepoName/TheAppName (this is is app we downloaded )
+
+We do we find helm charts   ***** ArtifactHUB
+
+kube-prometheus-stack **** use it for infra monitoring - everything predefine 
+
+MONITORING 
+INFRA 
+ARE YOUR NODES HEALTHY 
+ARE THEY CONSUMING THE RIGHT AMOUNT OF CPU AND MEMORY 
+ARE THEY ENOUGH NODES 
+ARE THERE ANY PODS IN A STUCK STATE 
+
+IF IT HAS A SERVICE, WE CHANGE CHANGE THE CLUSTER-IP TO NODEPOD IN ORDER TO EXPOSE THE SERVICE TO THE BROWSER 

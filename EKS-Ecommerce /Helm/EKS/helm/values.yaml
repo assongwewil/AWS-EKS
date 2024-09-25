@@ -62,3 +62,82 @@ shipping: {}
 user: {}
 
 web: {}
+
+
+# LINK 
+
+https://www.udemy.com/course/kubernetes-microservices/learn/lecture/27935030#overview
+
+use helm pull to get the chart from the repo first into our local 
+
+We need to download source code for chart and store locally 
+
+Writing GO TEMPLATES 
+
+number: 1  here 
+
+Then in the template we can reference it 
+
+replicas: {{ .Values.number}}
+
+
+  updateStrategy:
+    type: {{ .Values.updateStrategy }}
+  {{- if .Values.persistence.enabled }}
+
+
+
+    app: "{{ template "elasticsearch.uname" . }}"
+    {{- range $key, $value := .Values.labels }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+
+
+
+{{ toYaml .Values.readinessProbe | indent 10 }}
+        ports:
+        - name: http
+          containerPort: {{ .Values.httpPort }}
+        - name: transport
+          containerPort: {{ .Values.transportPort }}
+        resources:
+
+
+{{ end }}
+          {{- range .Values.secretMounts }}
+          - name: {{ .name }}
+            mountPath: {{ .path }}
+            {{- if .subPath }}
+            subPath: {{ .subPath }}
+            {{- end }}
+          {{- end }}
+
+
+full list of function HELM DOC 
+
+HOW TO WE CALL FUNCTION IN GO 
+
+
+GO FUNCTIONS 
+
+
+NAME OF THE FUNCTION FOLLOW BY SPACE FOLLOW BY A LIST OF PARAMETERS
+
+{{ FUNCTIONNAME  SPACE LIST OF PARAMETERS }}
+
+{{ FUNCTIONNAME  SPACE 1P 2p 3p 4p etc }}  ie 1P = first parameter 
+
+If we don't have the value define in the values.yaml but we are referring to it in the template **** error 
+
+
+SEQUENCE FUNCTION IN GO 
+If we want to join multiple functions 
+
+{{ Value | upper  }}  *** we take the value and pipe it to the function Upper
+
+
+{{ .Values.repoName | default "wilrepo"  }}     Get the value of repoName from the values.yaml as pass it to default function 
+if there's no value default function w2ill use wilrepo as the default value 
+
+
+{{ .Values.repoName | default "wilrepo" | upper  }} # and then pipe the result to the upper function 

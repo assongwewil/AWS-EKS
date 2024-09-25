@@ -78,3 +78,8 @@ spec:
 
       
       
+kubectl get pvc we will see 14
+
+We will have 14 pods running 
+
+It is recommended to key DB outside of the cluster 
